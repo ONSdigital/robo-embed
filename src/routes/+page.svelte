@@ -9,9 +9,10 @@
     Highlight,
     Section,
     Grid,
+    GridCell,
     Select,
     Notice,
-    Twisty,
+    Details,
     Container,
   } from "@onsvisual/svelte-components";
   import { Chart } from "@onsvisual/svelte-charts";
@@ -25,9 +26,12 @@
 
   let selected;
 
-  let map1;
+  let twistyOpen = true;
 
   async function doSelect(e, cd = null) {
+    twistyOpen = false;
+    document.getElementById("top")?.scrollIntoView();
+
     const code = cd || e?.detail?.areacd;
     data.place = await getPlace(`${base}/data/json/${code}.json`);
 
@@ -56,6 +60,7 @@
     const code = parent ? parent.split("#")[1] : null;
     // console.log(document.location.search, parent, code);
     if (code && code.length === 9) {
+      twistyOpen = false;
       doSelect(code);
     }
   }
@@ -81,43 +86,41 @@
   <meta name="googlebot" content="indexifembedded" />
 </svelte:head>
 
+<AnalyticsBanner {analyticsProps} hideBanner />
+
 <Embed on:load={init}>
-  <AnalyticsBanner {analyticsProps} hideBanner />
   {#each data.place.sections as section}
     {#if section.type === "Meta"}
       <!-- meta -->
     {:else if section.type === "Header"}
       <img src="{base}/img/header.png" alt="" />
-      <Highlight height="auto" marginBottom={false}>
-        <div style:padding="12px 24px 0" style:margin-bottom="-22px">
+      <Highlight id="top" marginBottom={false} theme="paleblue" themeOverrides
+      ={{"--ons-color-text": "var(--ons-color-ocean-blue)"}}>
+        <div style:padding="12px 24px 0" style:font-size="1.125rem">
           {#if section.title}<h2 aria-live="polite">{section.title}</h2>{/if}
-          {#if section.label}<label for="select" style:font-size="1rem"
-              >{section.label}</label
-            >{/if}
           <Select
             id="select"
-            idKey="areacd"
+            label="{section.label}"
             labelKey="areanm"
             options={data.places}
-            mode="search"
             on:change={doSelect}
             placeholder="Type an area name..."
-            floatingConfig={{ strategy: "fixed" }}
           />
         </div>
       </Highlight>
     {:else if section.type === "Highlight"}
       <Highlight
         id={section.id}
-        height="auto"
         marginTop={false}
         marginBottom={false}
         theme="light"
       >
-        {@html section.content || ""}
+        <span style:font-weight="normal">
+          {@html section.content || ""}
+        </span>
       </Highlight>
     {:else if section.type === "Chart" && section.chartType}
-      <Grid width="narrow" colwidth="full">
+      <Grid width="narrow">
         <div class="chart-outer">
           <Chart {section} />
           {#if section.note}
@@ -146,7 +149,7 @@
       </Section>
     {:else if section.type === "Map"}
       <Section cls="section-map">
-        <RoboMap {section} --height={section.height}></RoboMap>
+        <RoboMap {section} height={section.height}></RoboMap>
       </Section>
     {:else}
       <Section id={section.id} title={section.title}>
@@ -156,12 +159,12 @@
   {/each}
 
   <Container marginTop={!data.place.place ? true : false} marginBottom>
-    <Twisty title="All versions of this article">
-      <Grid colwidth="narrow">
+    <Details title="All versions of this article" bind:open={twistyOpen}>
+      <Grid colWidth="narrow">
         {#each regions as region}
           {#each [data.places.filter((p) => p.parentcd === region.cd)] as places}
             {#if places[0]}
-              <div>
+              <GridCell>
                 <strong>{region.nm}</strong>
                 <div style:font-size="smaller">
                   {#each places as place}
@@ -172,12 +175,12 @@
                     ><br />
                   {/each}
                 </div>
-              </div>
+              </GridCell>
             {/if}
           {/each}
         {/each}
       </Grid>
-    </Twisty>
+    </Details>
   </Container>
 </Embed>
 

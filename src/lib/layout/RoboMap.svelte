@@ -17,6 +17,7 @@
     import { getColor } from "$lib/utils.js";
 
     export let section = {};
+    export let height = 300;
 
     // binding for the map
     let map
@@ -32,9 +33,9 @@
     let regionBoundaries = feature(regions, regions.objects.rgn);
 
     //just select the parent region
-    $:myregion = regionBoundaries.features.filter(
+    $: myregion = regionBoundaries.features.find(
         (d) => d.properties.areacd == section.regioncd
-    )[0];
+    );
 
     //and use it to find the bounding box with turf, then use that bbox when setting the map
     $:regionBbox = bbox(myregion);
@@ -52,7 +53,7 @@
 </script>
 
 <h3 class="chart-title">{section.title}</h3>
-<div class="map">
+<div class="map" style:height="{height}px">
     <Map
         id={section.id}
         {style}
@@ -67,7 +68,6 @@
             type="geojson"
             data={laBoundaries}
             promoteId="areacd"
-            maxzoom={13}
         >
             <MapLayer
                 id="ltla"
@@ -85,6 +85,7 @@
                     "fill-opacity": 0.7,
                 }}
                 order="water_name"
+                clickIgnore
             />
             <MapLayer
                 id="ltla-line"
@@ -98,21 +99,26 @@
                         "orange",
                         "rgba(255, 255, 255, 0)",
                     ],
-                    "line-width": [
-                        "case",
-                        ["==", ["feature-state", "selected"], true],
-                        2,
-                        1,
-                    ],
+                    "line-width": 2,
                 }}
+            />
+        </MapSource>
+        <MapSource
+            id="region"
+            type="geojson"
+            data={myregion}
+            promoteId="areacd"
+        >
+            <MapLayer
+                id="region-line"
+                type="line"
+                paint={{
+                    "line-color": "grey",
+                    "line-width": 1,
+                }}
+                order="ltla-line"
             />
         </MapSource>
     </Map>
 </div>
 <div class="chart-footer">{section.footer}</div>
-
-<style>
-    .map {
-        height: var(--height, 200px);
-    }
-</style>
