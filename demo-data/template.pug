@@ -11,12 +11,12 @@ section.Meta
 if !place
     section.Header
         prop.title How the population has changed in your area
-        prop.label Select an area to see how the population has changed
+        prop.label Select a local authority
 
 else
     section.Header
         prop.title How the population has changed #{place.getName("in")}
-        prop.label Select another area to see how the population has changed
+        prop.label Select another local authority
 
     section.Highlight
         p In 2020, #{place.getName("the")} was the #{places.filterBy("parentcd", place.parentcd).getRank(place, "p2020").toWords("ordinal", {keepFirst: false})} largest local authority in #{lookup[place.parentcd].getName("the")}, with a total population of #{place.p2020.format()}. #{moreLess(place.p2020 - place.p2019, ["An increase", "A decrease", "No change"])} compared with 2019.

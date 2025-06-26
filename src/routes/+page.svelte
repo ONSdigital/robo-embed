@@ -11,6 +11,7 @@
     Grid,
     GridCell,
     Select,
+    Button,
     Notice,
     Details,
     Container,
@@ -25,14 +26,15 @@
   $: console.log(data.place.sections);
 
   let selected;
+  let clearInput;
 
   let twistyOpen = true;
 
-  async function doSelect(e, cd = null) {
-    twistyOpen = false;
+  async function doSelect(code, click = false) {
+    code = data.places.find(p => p.areacd === code) ? code : "default";
+    twistyOpen = code === "default" ? true : false;
     document.getElementById("top")?.scrollIntoView();
 
-    const code = cd || e?.detail?.areacd;
     data.place = await getPlace(`${base}/data/json/${code}.json`);
 
     data.place.sections.forEach(d=>{
@@ -41,28 +43,25 @@
           e.x = new Date (e.x)
         })
       }
-    })  
+    });
     
-    selected = data.places.find((d) => d?.areacd === code);
+    selected = null;
+    clearInput();
     // console.log(e);
     document.getElementById("select").blur();
     // e.currentTarget.blur();
     // window.scrollTo(0,0);
     analyticsEvent({
-      event: cd ? "clickSelect" : "searchSelect",
-      areaCode: data.place.place.areacd,
-      areaName: data.place.place.areanm,
+      event: click ? "clickSelect" : "searchSelect",
+      areaCode: data.place?.place?.areacd || null,
+      areaName: data.place?.place?.areanm || null,
     });
   }
 
   function init(e) {
     const parent = e.detail.parentUrl;
     const code = parent ? parent.split("#")[1] : null;
-    // console.log(document.location.search, parent, code);
-    if (code && code.length === 9) {
-      twistyOpen = false;
-      doSelect(code);
-    }
+    doSelect(code);
   }
 
   const analyticsProps = (() => {
@@ -94,18 +93,27 @@
       <!-- meta -->
     {:else if section.type === "Header"}
       <img src="{base}/img/header.png" alt="" />
-      <Highlight id="top" marginBottom={false} theme="paleblue" themeOverrides
+      <Highlight width="medium" id="top" marginBottom={false} theme="paleblue" themeOverrides
       ={{"--ons-color-text": "var(--ons-color-ocean-blue)"}}>
-        <div style:padding="12px 24px 0" style:font-size="1.125rem">
+        <div class="header-block">
           {#if section.title}<h2 aria-live="polite">{section.title}</h2>{/if}
-          <Select
-            id="select"
-            label="{section.label}"
-            labelKey="areanm"
-            options={data.places}
-            on:change={doSelect}
-            placeholder="Type an area name..."
-          />
+          <form class="select-form" on:submit|preventDefault={() => doSelect(selected?.areacd)}>
+            <div style:padding-right="6px" style:flex-grow="1">
+              <Select
+                id="select"
+                label={section.label}
+                labelKey="areanm"
+                options={data.places}
+                bind:value={selected}
+                bind:clearInput
+                placeholder="Type an area name..."
+              />
+            </div>
+            <div style:padding="6px 0 3px" style:flex-shrink="1">
+              <Button type="sumbit" small>Select area</Button>
+            </div>
+          </form>
+          {#if data.place.place}<a href="#0" on:click={() => doSelect("default")}>Clear selected area</a>{/if}
         </div>
       </Highlight>
     {:else if section.type === "Highlight"}
@@ -170,7 +178,7 @@
                   {#each places as place}
                     <button
                       class="btn-link"
-                      on:click={(e) => doSelect(e, place.areacd)}
+                      on:click={(e) => doSelect(place.areacd, true)}
                       >{place.areanm}</button
                     ><br />
                   {/each}
