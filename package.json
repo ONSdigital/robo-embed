@@ -1,6 +1,6 @@
 {
   "name": "@onsvisual/robo-embed",
-  "homepage": "http://onsvisual.github.io/robo-embed",
+  "homepage": "http://onsdigital.github.io/robo-embed",
   "version": "1.0.0",
   "scripts": {
     "dev": "vite dev",
