@@ -1,0 +1,2 @@
+//js
+import{c as s,a as l}from"../chunks/VGoPT1HE.js";import{b as c,E as i,l as p,z as m}from"../chunks/kWDevCSE.js";import{B as u}from"../chunks/O0bgSxrt.js";function f(e,a,...n){var o=new u(e);c(()=>{const r=a()??null;o.ensure(r,r&&(t=>r(t,...n)))},i)}const _=!0,d="always",v=Object.freeze(Object.defineProperty({__proto__:null,prerender:_,trailingSlash:d},Symbol.toStringTag,{value:"Module"}));function y(e,a){var n=s(),o=p(n);f(o,()=>a.children??m),l(e,n)}export{y as component,v as universal};
