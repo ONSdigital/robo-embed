@@ -14,10 +14,10 @@
 	import style from "$lib/mapstyles/style-ons-light.json";
 	//import topojson function to convert topojson to geojson
 	import { feature } from "topojson-client";
-	// import boundaries for LTLA
-	import ltla from "$lib/boundaries/ltla2021.json";
+	// import boundaries for LTLA (2024 local authorities)
+	import ltla from "$lib/boundaries/ltla2024.json";
 	// import boundaries for regions
-	import regions from "$lib/boundaries/rgn2021.json";
+	import regions from "$lib/boundaries/rgn2024.json";
 	//import turf/bbox to work out the bounding box of a region
 	import bbox from "@turf/bbox";
 	//use equal interval to work out breaks
