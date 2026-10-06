@@ -20,6 +20,8 @@ const config = {
 			strict: false
 		}),
 		prerender: {
+			// Nothing links to /embed (it's only used by embed codes), so list it here
+			entries: ["*", "/embed"],
 			handleHttpError: "warn",
 			handleMissingId: "warn"
 		},

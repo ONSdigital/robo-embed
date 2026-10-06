@@ -55,6 +55,7 @@
 
 		a.href = base64;
 		a.download = `${place.areanm.replaceAll(" ", "-")}_${section.id}.png`;
+		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
 	}

@@ -68,7 +68,7 @@
 
 	const analyticsProps = $derived.by(() => {
 		const props = {};
-		for (const key in ["contentTitle", "releaseDate", "outputSeries", "contentType"]) {
+		for (const key of ["contentTitle", "releaseDate", "outputSeries", "contentType"]) {
 			if (data?.meta?.[key]) props[key] = data.meta[key];
 		}
 		return props;
@@ -118,7 +118,7 @@
 							/>
 						</div>
 						<div style:padding="6px 0 3px" style:flex-shrink="1">
-							<Button type="sumbit" small>Select area</Button>
+							<Button type="submit" small>Select area</Button>
 						</div>
 					</form>
 					{#if place.place}<a href="#0" onclick={() => doSelect("default")}
