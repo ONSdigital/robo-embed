@@ -1,3 +1,19 @@
+-// Variables
+-var years = ["2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
+-var cols = years.map(year => `p${year}`)
+-var latest_yr = years[years.length - 1]
+-var prev_yr = years[years.length - 2]
+-var latest_col = cols[cols.length - 1]
+-var prev_col = cols[cols.length - 2]
+-var first_col = cols[0]
+-var region = lookup[place?.parentcd]
+-var siblings = place ? places.filterBy("parentcd", place.parentcd) : []
+-var uk = lookup["K02000001"]
+-// Median ages are shown as whole numbers, so compare the rounded values
+-var older = {texts: ["older than", "the same as", "younger than"]}
+-var ageCompare = (a, b) => compareTo(Math.round(a), Math.round(b), older)
+-var more = {texts: ["more than", "the same as", "less than"]}
+
 -// Metadata for SEO and analytics
 section.Meta
     prop.title How the population has changed in your area - ONS
@@ -19,41 +35,43 @@ else
         prop.label Select another local authority
 
     section.Highlight
-        p In 2020, #{place.getName("the")} was the #{places.filterBy("parentcd", place.parentcd).getRank(place, "p2020").toWords("ordinal", {keepFirst: false})} largest local authority in #{lookup[place.parentcd].getName("the")}, with a total population of #{place.p2020.format()}. #{moreLess(place.p2020 - place.p2019, ["An increase", "A decrease", "No change"])} compared with 2019.
+        p In #{latest_yr}, #{place.getName("the")} was #{siblings.getRank(place, latest_col).describe("largest")} local authority in #{region.getName("the")}, with a population of #{place[latest_col].approx()}. Its population #{place[prev_col].describeChange(place[latest_col])} compared with #{prev_yr}, and has #{place[first_col].describeChange(place[latest_col], {texts: ["increased", "decreased", "stayed the same"]})} since #{years[0]}.
     
     section#chart-timeseries.Chart
         prop.chartType line-highlight
-        prop.title Largest local authorities #{lookup[place.parentcd].getName("in")}, 2002-2020
+        prop.title Largest local authorities #{region.getName("in")}, #{years[0]}-#{latest_yr}
         prop.footer Source: Office for National Statistics
-        prop.data= places.filterBy("parentcd", place.parentcd).toData({x: ["2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"], y: ["p2002", "p2003", "p2004", "p2005", "p2006", "p2007", "p2008", "p2009", "p2010", "p2011", "p2012", "p2013", "p2014", "p2015", "p2016", "p2017", "p2018", "p2019", "p2020"], z: "areanm"})
+        prop.data= siblings.toData({x: years, y: cols, z: "areanm"})
         prop.selected= place.areanm
         prop.padding-top= 20
         prop.padding-right= 120
         prop.padding-left= 80
+        //- Show years without a thousands separator (the default is "2,020")
+        prop.xFormatTickString d
 
     section.Section
         prop.title Population density #{place.getName("in")}
-        p In 2020, the population density #{place.getName("in")} was #{place["density"].format()} people per square kilometre, which was #{moreLess(place["density"] - lookup[place.parentcd]["density"], ["more than", "less than", "the same as"])} #{lookup[place.parentcd].getName("the")} (#{lookup[place.parentcd]["density"].format()}), and #{moreLess(place["density"] - lookup["K02000001"]["density"], ["more than", "less than", "the same as"])} the United Kingdom as a whole (#{lookup["K02000001"]["density"].format()}).
+        p In #{latest_yr}, the population density #{place.getName("in")} was #{place.density.format()} people per square kilometre, which was #{place.density.compareTo(region.density, more)} #{region.getName("the")} (#{region.density.format()}), and #{place.density.compareTo(uk.density, more)} the United Kingdom as a whole (#{uk.density.format()}).
     
     section#chart-density.Chart
         prop.chartType bar
-        prop.title Densest local authorities #{lookup[place.parentcd].getName("in")}, 2020
+        prop.title Densest local authorities #{region.getName("in")}, #{latest_yr}
         prop.footer Source: Office for National Statistics
-        prop.data= places.filterBy("parentcd", place.parentcd).top("density", 5).toData({x: "density", y: "areanm"})
+        prop.data= siblings.top("density", 5).toData({x: "density", y: "areanm"})
         prop.padding-left= 120
         prop.directLabel= true
 
     section.Section
         prop.title Median age #{place.getName("in")}
-        p In 2020, the median age #{place.getName("in")} was #{place["age_med"].format(".0f")} years, which was #{moreLess(Math.round(place["age_med"]) - Math.round(lookup[place.parentcd]["age_med"]), ["older than", "younger than", "the same as"])} #{lookup[place.parentcd].getName("the")} (#{lookup[place.parentcd]["age_med"].format(".0f")} years), and #{moreLess(Math.round(place["age_med"]) - Math.round(lookup["K02000001"]["age_med"]), ["older than", "younger than", "the same as"])} the United Kingdom as a whole (#{lookup["K02000001"]["age_med"].format(".0f")} years).
+        p In #{latest_yr}, the median age #{place.getName("in")} was #{place.age_med.format(".0f")} years, which was #{ageCompare(place.age_med, region.age_med)} #{region.getName("the")} (#{region.age_med.format(".0f")} years), and #{ageCompare(place.age_med, uk.age_med)} the United Kingdom as a whole (#{uk.age_med.format(".0f")} years).
 
     section#chart-age.Chart
         prop.chartType bar
         prop.xSuffix= " years"
         prop.directLabel= true
-        prop.title Oldest local authorities #{lookup[place.parentcd].getName("in")}, 2020
+        prop.title Oldest local authorities #{region.getName("in")}, #{latest_yr}
         prop.footer Source: Office for National Statistics
-        prop.data= places.filterBy("parentcd", place.parentcd).top("age_med", 5).toData({x: "age_med", y: "areanm"})
+        prop.data= siblings.top("age_med", 5).toData({x: "age_med", y: "areanm"})
         prop.padding-left= 120
         prop.padding-right= 10
 
@@ -67,10 +85,10 @@ else
         prop.r= "2|20"
 
     section#map.Map
-        prop.data= places.filterBy("parentcd", place.parentcd).toData({x: "density", areanm: "areanm",areacd:"areacd"})
+        prop.data= siblings.toData({x: "density", areanm: "areanm",areacd:"areacd"})
         prop.selected= place.areacd
         prop.height= 300
-        prop.title Density #{place.getName("in")} and other local authorities #{lookup[place.parentcd].getName("in")}
+        prop.title Density #{place.getName("in")} and other local authorities #{region.getName("in")}
         prop.footer Source: Office for National Statistics
         prop.regioncd= place.parentcd
 
