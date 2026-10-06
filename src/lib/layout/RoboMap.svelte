@@ -56,7 +56,8 @@
 
 	//move the map if a different area is selected
 	$effect(() => {
-		if (map) map.fitBounds(regionBbox);
+		// Pad the region so its edges don't touch (and get clipped by) the edge of the map
+		if (map) map.fitBounds(regionBbox, { padding: 20 });
 	});
 </script>
 

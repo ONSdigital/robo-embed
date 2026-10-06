@@ -76,12 +76,18 @@ else
         prop.padding-left= 120
         prop.padding-right= 10
 
+    //- A copy of places with each area's region name, so the legend shows names rather than codes
+    - var placesWithRegion = places.map(d => ({...d, region: lookup[d.parentcd].areanm}))
     section#chart-scatter.Chart
         prop.chartType scatter
-        prop.title Scatter chart title 
-        prop.data= places.toData({x:"density",y:"age_med",r:"area",areacd:"areacd",z:"parentcd",areanm:"areanm"})
+        prop.title Population density and median age of local authorities, #{latest_yr}
+        prop.subtitle Each circle is a local authority, sized by its area
+        prop.xAxisLabel People per sq km
+        prop.yAxisLabel Median age (years)
+        prop.footer Source: Office for National Statistics
+        prop.data= placesWithRegion.toData({x: "density", y: "age_med", r: "area", areacd: "areacd", z: "region", areanm: "areanm"})
         prop.height= "500px"
-        prop.selected= place.areacd 
+        prop.selected= place.areacd
         prop.rKey= "r"
         prop.r= "2|20"
 
