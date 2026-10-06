@@ -27,31 +27,44 @@
 	export let colors = ["#206095", "#a8bd3a", "#871a5b", "#27a0cc"];
 	export let darkMode = false;
 	export let borderColor = darkMode ? "white" : "#206095";
-	
-	const getOptionLabel = groupKey && !groupItems ? (option) => `${option[labelKey]} <span class="group">${option[groupKey]}</span>` : (option) => option[labelKey];
+
+	const getOptionLabel =
+		groupKey && !groupItems
+			? (option) => `${option[labelKey]} <span class="group">${option[groupKey]}</span>`
+			: (option) => option[labelKey];
 	export let getSelectionLabel = (option) => {
-		if (option) return getOptionLabel(option)
+		if (option) return getOptionLabel(option);
 		else return null;
 	};
 	const groupBy = groupItems && groupKey ? (item) => item[groupKey] : undefined;
 	const indicatorSvg = mode == "search" ? searchIcon : chevronIcon;
 	const containerStyles = `--inputFontSize: ${fontSize}; --groupTitleFontSize: ${fontSize}; --height: ${height}px; font-size: ${fontSize};`;
-	
+
 	const ariaValues = (values) => `${values}, selected.`;
-	const ariaListOpen = (label, count) => `You are currently focused on ${label}. There are ${count} results available.`;
-	const ariaFocused = () => `Select is focused, type to refine list, press down to open the menu.`;
-	
-	$: noOptionsMessage = isWaiting ? "Loading..." : mode == "search" && filterText.length < 3 ? "Enter 3 or more characters for suggestions" : `No results match ${filterText}`;
-	$: itemFilter = (Array.isArray(value) && value.length >= maxSelected) || mode == "search" && filterText.length < 3
-	? (label, filterText, option) => false
-	: (label, filterText, option) => `${label}`.split("<")[0].toLowerCase().slice(0, filterText.length) == filterText.toLowerCase();
-	
+	const ariaListOpen = (label, count) =>
+		`You are currently focused on ${label}. There are ${count} results available.`;
+	const ariaFocused = () =>
+		`Select is focused, type to refine list, press down to open the menu.`;
+
+	$: noOptionsMessage = isWaiting
+		? "Loading..."
+		: mode == "search" && filterText.length < 3
+			? "Enter 3 or more characters for suggestions"
+			: `No results match ${filterText}`;
+	$: itemFilter =
+		(Array.isArray(value) && value.length >= maxSelected) ||
+		(mode == "search" && filterText.length < 3)
+			? (label, filterText, option) => false
+			: (label, filterText, option) =>
+					`${label}`.split("<")[0].toLowerCase().slice(0, filterText.length) ==
+					filterText.toLowerCase();
+
 	let el;
 	let isFocused;
 	let listOpen;
 	let isWaiting;
 	let handleClear;
-	
+
 	const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 	async function doSelect(e) {
@@ -64,13 +77,15 @@
 			let clearSelect = el.getElementsByClassName("clearSelect")[0];
 			if (clearSelect) {
 				clearSelect.tabIndex = 0;
-				clearSelect.onkeypress = (e) => { if (e.key == "Enter") handleClear() };
+				clearSelect.onkeypress = (e) => {
+					if (e.key == "Enter") handleClear();
+				};
 				clearSelect.removeAttribute("aria-hidden");
 				clearSelect.setAttribute("aria-label", "Clear selection");
 			}
 		}
 	}
-	
+
 	onMount(() => {
 		let style = el.style;
 		style.setProperty("--firstItem", colors[0 % colors.length]);
@@ -81,16 +96,45 @@
 	});
 </script>
 
-<div class="selectbox" class:multi-selected={value && isMulti} class:focused={isFocused} class:selected={value && !listOpen && !isMulti} bind:this={el}>
+<div
+	class="selectbox"
+	class:multi-selected={value && isMulti}
+	class:focused={isFocused}
+	class:selected={value && !listOpen && !isMulti}
+	bind:this={el}
+>
 	<Select
-		{id} {container} {items} {placeholder} {isMulti} {isSearchable}
-		{groupBy} {loadOptions} {getSelectionLabel} {getOptionLabel} {itemFilter}
-		{ariaValues} {ariaListOpen} {ariaFocused} {noOptionsMessage} {indicatorSvg}
+		{id}
+		{container}
+		{items}
+		{placeholder}
+		{isMulti}
+		{isSearchable}
+		{groupBy}
+		{loadOptions}
+		{getSelectionLabel}
+		{getOptionLabel}
+		{itemFilter}
+		{ariaValues}
+		{ariaListOpen}
+		{ariaFocused}
+		{noOptionsMessage}
+		{indicatorSvg}
 		{containerStyles}
 		optionIdentifier={idKey}
-		bind:isFocused bind:value bind:listOpen bind:filterText bind:isWaiting bind:handleClear
-		on:select={doSelect} on:clear on:loaded on:error
-		showIndicator isClearable={!isClearable ? false : !isMulti}/>
+		bind:isFocused
+		bind:value
+		bind:listOpen
+		bind:filterText
+		bind:isWaiting
+		bind:handleClear
+		on:select={doSelect}
+		on:clear
+		on:loaded
+		on:error
+		showIndicator
+		isClearable={!isClearable ? false : !isMulti}
+	/>
 </div>
 
 <style>
@@ -100,8 +144,8 @@
 		border: 0;
 	}
 	.selectbox {
-    --border: 2px solid var(--borderColor, #206095);
-    --borderRadius: 0;
+		--border: 2px solid var(--borderColor, #206095);
+		--borderRadius: 0;
 		--listBorderRadius: 0;
 		--itemFirstBorderRadius: 0;
 		--multiItemBorderRadius: 0;
@@ -130,9 +174,9 @@
 		--multiClearHoverBG: none;
 		--multiItemBG: grey;
 		--multiItemActiveBG: grey;
-		--spinnerColor: rgba(255,255,255,0);
-    --listMaxHeight: 124px;
-  }
+		--spinnerColor: rgba(255, 255, 255, 0);
+		--listMaxHeight: 124px;
+	}
 	:global(.selectbox, .selectbox input, .selectbox .item, .selectbox svg) {
 		cursor: pointer !important;
 	}

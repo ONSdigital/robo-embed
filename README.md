@@ -4,7 +4,7 @@ A Svelte Kit template for creating embedded semi-automated journalism (AKA "robo
 
 The template is design to use PUG templates and wide-format CSV files, as created within [this editor](https://github.com/ONSvisual/robo-editor).
 
-*Note: If you'd like to create semi-automated articles on standalone pages, please use this [alternative template](https://github.com/ONSvisual/robo-article).*
+_Note: If you'd like to create semi-automated articles on standalone pages, please use this [alternative template](https://github.com/ONSvisual/robo-article)._
 
 ## Getting started
 
@@ -47,7 +47,7 @@ If you're using a dataset that is not based around local authority data you'll n
 
 ```javascript
 // 3-letter ID prefixes to filter from CSV id column
-export const filter = ["E06","E07","E08","E09","N09","S12","W06"];
+export const filter = ["E06", "E07", "E08", "E09", "N09", "S12", "W06"];
 ```
 
 In the above case, you are also likely to want to change the **cols** parameter, which selects which columns to extract from the source CSV file for the purposes of powering the dropdown selector in the app. (The output CSV file can be found at **/static/data/places.csv**.)
@@ -57,7 +57,7 @@ In the above case, you are also likely to want to change the **cols** parameter,
 export const cols = ["areacd", "areanm", "parentcd"];
 ```
 
-*Note: You might want to specify additional data columns here in order to supply data for charts/maps that cover many (or all) rows in the data set.*
+_Note: You might want to specify additional data columns here in order to supply data for charts/maps that cover many (or all) rows in the data set._
 
 ## Customising the app
 
@@ -76,6 +76,6 @@ npm run build
 Before building the app, you'll need to customise the base paths in the **/app.config.js** file. The default path is **/robo-embed**. You can set a separate base-relative path for a preview server (eg. **/my-app**) and for a production server (eg. **/visualisations/my-app**):
 
 ```javascript
-export const base_prod = '/robo-embed'; // Directory on the ONS website
-export const base_preview = '/robo-embed'; // Directory on datavisweb preview server or Github Pages
+export const base_prod = "/robo-embed"; // Directory on the ONS website
+export const base_preview = "/robo-embed"; // Directory on datavisweb preview server or Github Pages
 ```

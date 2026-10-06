@@ -1,0 +1,15 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+bun.lockb
+
+# Build output and generated data
+/build
+.svelte-kit/
+/static/data/
+
+# Minified boundary files and the copied base map style
+/src/lib/boundaries/
+/src/lib/mapstyles/
