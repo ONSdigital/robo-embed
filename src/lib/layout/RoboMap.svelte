@@ -16,38 +16,39 @@
 	//simple function to set the colours given some data, breaks and colours
 	import { getColor } from "$lib/utils.js";
 
-	export let section = {};
-	export let height = 300;
+	let { section = {}, height = 300 } = $props();
 
 	// binding for the map
-	let map;
+	let map = $state();
 
 	//define some colour for our scale
 	const colors = ["#ffffcc", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"];
 
 	//set selected to the area from the robo
-	$: selected = section.selected;
+	let selected = $derived(section.selected);
 
 	//convert topojsons to geojsons
 	let laBoundaries = feature(ltla, ltla.objects.ltla);
 	let regionBoundaries = feature(regions, regions.objects.rgn);
 
 	//just select the parent region
-	$: myregion = regionBoundaries.features.find((d) => d.properties.areacd == section.regioncd);
+	let myregion = $derived(
+		regionBoundaries.features.find((d) => d.properties.areacd == section.regioncd)
+	);
 
 	//and use it to find the bounding box with turf, then use that bbox when setting the map
-	$: regionBbox = bbox(myregion);
+	let regionBbox = $derived(bbox(myregion));
 
 	//generate equal breaks
-	$: breaks = equalIntervalBreaks(section.data.map((d) => d.x).sort(), 5);
+	let breaks = $derived(equalIntervalBreaks(section.data.map((d) => d.x).sort(), 5));
 
 	//add colours to the data
-	$: section.data.forEach((d) => {
-		d.color = getColor(d.x, breaks, colors);
-	});
+	let data = $derived(section.data.map((d) => ({ ...d, color: getColor(d.x, breaks, colors) })));
 
-	//reactive statement to move the map if a different area is selected
-	$: if (map) map.fitBounds(regionBbox);
+	//move the map if a different area is selected
+	$effect(() => {
+		if (map) map.fitBounds(regionBbox);
+	});
 </script>
 
 <h3 class="chart-title">{section.title}</h3>
@@ -64,7 +65,7 @@
 		<MapSource id="ltla" type="geojson" data={laBoundaries} promoteId="areacd">
 			<MapLayer
 				id="ltla"
-				data={section.data}
+				{data}
 				type="fill"
 				select={true}
 				bind:selected

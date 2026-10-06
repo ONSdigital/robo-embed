@@ -1,5 +1,5 @@
 <script>
-	export let section;
+	let { section } = $props();
 </script>
 
 <div class="summary-item">
