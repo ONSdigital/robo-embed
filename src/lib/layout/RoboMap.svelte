@@ -1,3 +1,12 @@
+<script module>
+	// MapLibre can't find its worker script once Vite has bundled it, so point it at the bundled copy
+	// before any map is created (see the @onsvisual/svelte-maps README). This is here rather than in
+	// the root layout so that pages without a map (eg. /embed) don't load MapLibre.
+	import { setWorkerUrl } from "maplibre-gl";
+	import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+	setWorkerUrl(maplibreWorkerUrl);
+</script>
+
 <script>
 	//import the stuff from svelte maps
 	import { Map, MapSource, MapLayer } from "@onsvisual/svelte-maps";
