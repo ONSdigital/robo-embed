@@ -1,14 +1,11 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from "fs";
-import { csvParse } from "d3-dsv";
-import { MagicArray, renderJSON, autoType } from "@onsvisual/robo-utils";
+import { MagicArray, renderJSON, csvParse } from "@onsvisual/robo-utils";
 import pug from "pug";
 import { filter, cols, source_dir, data_file, template_file, files_to_copy } from "../src/app.config.js";
 
 // Load data CSV
 const data_raw = readFileSync(`${source_dir}/${data_file}`, {encoding:'utf8', flag:'r'});
-const data_arr = csvParse(data_raw.replace(/\uFEFF/g, ''), autoType);
-const data = new MagicArray();
-for (const d of data_arr) data.push(d);
+const data = MagicArray.from(csvParse(data_raw)); // csvParse strips any byte order mark
 
 // Create the output directories (if they don't exist)
 const dir = "./static/data/json";
