@@ -69,7 +69,9 @@
 	const analyticsProps = $derived.by(() => {
 		const props = {};
 		for (const key of ["contentTitle", "releaseDate", "outputSeries", "contentType"]) {
-			if (data?.meta?.[key]) props[key] = data.meta[key];
+			if (data?.meta?.[key])
+				props[key] =
+					key === "releaseDate" ? data.meta[key].replaceAll("-", "") : data.meta[key];
 		}
 		return props;
 	});
