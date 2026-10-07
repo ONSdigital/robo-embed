@@ -16,7 +16,9 @@ const config = {
 			// Options below are defaults
 			pages: "build",
 			assets: "build",
-			strict: false
+			strict: false,
+			// Preview builds are a single fallback page rather than prerendered pages
+			fallback: preview ? "404.html" : undefined
 		}),
 		prerender: {
 			// Nothing links to /embed (it's only used by embed codes), so list it here
