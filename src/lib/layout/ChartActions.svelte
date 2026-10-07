@@ -1,6 +1,6 @@
 <script>
 	import html2canvas from "html2canvas";
-	import { resolve } from "$app/paths";
+	import { app_url } from "../../app.config.js";
 	import { Button, Textarea } from "@onsvisual/svelte-components";
 	import { timeFormat, timeParse } from "d3-time-format";
 
@@ -92,7 +92,7 @@
 
 	let embedCode = $derived(`<div id="${section.id}"></div>
 <scr${""}ipt src="https://cdn.ons.gov.uk/vendor/pym/1.3.2/pym.min.js"></scr${""}ipt>
-<scr${""}ipt>var pymParent = new pym.Parent("${section.id}", "https://www.ons.gov.uk${resolve("/embed/")}?area=${place.areacd}&chart=${section.id}", {name: "${section.id}", title: "Embedded chart"});</scr${""}ipt>`);
+<scr${""}ipt>var pymParent = new pym.Parent("${section.id}", "${app_url}/embed/?area=${place.areacd}&chart=${section.id}", {name: "${section.id}", title: "Embedded chart"});</scr${""}ipt>`);
 </script>
 
 <div class="chart-actions" bind:this={el}>

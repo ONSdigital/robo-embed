@@ -4,6 +4,11 @@
 export const base_prod = "/robo-embed"; // Directory on the ONS website
 export const base_preview = "/robo-embed"; // Directory on datavisweb preview server or Github Pages
 
+// Public address of the app, with no trailing slash. This is only used where the app needs a full,
+// absolute URL (the chart embed codes). It doesn't affect the build or the paths the app uses, which
+// are set by base_prod and base_preview above.
+export const app_url = "https://www.ons.gov.uk/robo-embed";
+
 // BUILD DATA CONFIG
 
 // Locations of data file and template (path to a local or shared drive)

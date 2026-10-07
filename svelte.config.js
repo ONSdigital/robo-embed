@@ -5,8 +5,7 @@ import { base_preview, base_prod } from "./src/app.config.js";
 const preview = process.env.PUBLIC_APP_ENV === "preview";
 const production = process.env.NODE_ENV === "production";
 // With no base path, use relative URLs so the build can be deployed to any path (see src/app.config.js).
-// robo-embed sets both base paths, because its embed codes use absolute ons.gov.uk URLs, so its
-// paths are absolute.
+// The chart embed codes use app_url, so they don't depend on this.
 const base = (preview ? base_preview : production ? base_prod : "") || "";
 const relative = !base;
 
