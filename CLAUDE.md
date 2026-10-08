@@ -12,7 +12,7 @@ A SvelteKit 2 / Svelte 5 template for semi-automated ("robo-journalism") area co
 npm run build:data      # render demo-data/ (or the source in app.config.js) into static/data/
 npm run dev             # dev server at localhost:5173 (localhost:5173/iframe.html shows it in an iframe)
 npm run build           # production build to build/, then js-fix
-npm run build:preview   # build with base_preview
+npm run build:preview   # preview build: a single 404.html with base_preview
 npm run lint            # prettier --check
 npm run format          # prettier --write
 ```
@@ -33,6 +33,8 @@ Formatting (`.prettierrc`): tabs (width 4), print width 100, no trailing commas,
 
 **Map (`src/lib/layout/RoboMap.svelte`).** Uses `@onsvisual/svelte-maps` (2.x, MapLibre 6; `RoboMap` sets up its worker script) with TopoJSON boundaries bundled from `src/lib/boundaries/` (2024 local authorities, and regions plus Northern Ireland, Scotland and Wales) and the base style in `src/lib/mapstyles/`. The `Map` section's `data` (`x` values keyed by `areacd`) is coloured with equal-interval breaks, and the map zooms to the region in `regioncd`. Areas missing from the boundary files aren't drawn.
 
-**Base paths.** `base_prod` and `base_preview` in `src/app.config.js` set `paths.base` (absolute, not relative), because the embed codes in `ChartActions.svelte` use absolute `https://www.ons.gov.uk/...` URLs. In dev there's no base. Use `asset()` for files in `static/` and `resolve()` for routes, from `$app/paths` (not the deprecated `base`). `scripts/js-fix.js` prepends `//js` to every JS file in `build/_app` to avoid MIME type errors on the ONS servers.
+**Base paths.** `base_prod` and `base_preview` in `src/app.config.js` set `paths.base`: a path builds absolute URLs, and `null` builds relative ones, so the app can be deployed to any path. The chart embed codes in `ChartActions.svelte` need absolute URLs, so they're built from `app_url` in the same file, which doesn't affect the build; don't build them from `resolve()`/`asset()`, which return relative paths in a relative build. In dev there's no base. Use `asset()` for files in `static/` and `resolve()` for routes, from `$app/paths` (not the deprecated `base`). `scripts/js-fix.js` prepends `//js` to every JS file in `build/_app` to avoid MIME type errors on the ONS servers.
+
+**Preview builds.** `npm run build:preview` sets `PUBLIC_APP_ENV=preview`, which uses `base_preview` and turns prerendering off (in `src/routes/+layout.js`). The build is then a single `404.html` fallback page (adapter-static's `fallback` in `svelte.config.js`) that renders every route in the browser, plus the JS chunks, data and static files. `static/web.config` makes our internal IIS server use `404.html` for any unknown URL (and as the default document), so links to any route work. Don't add `export const prerender = true` to individual routes, or preview builds will prerender them again.
 
 **Components.** The UI comes from `@onsvisual/svelte-components`, which is still written in Svelte 4 syntax. Its components dispatch events, so listen with `on:click` / `on:load` on them, while the app's own components and DOM elements use runes and `onclick`. Its `Select` creates its input asynchronously, so `#select` may not exist yet when the page loads.
