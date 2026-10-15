@@ -121,3 +121,7 @@ npm run build:preview
 ```
 
 A preview build uses **base_preview**, and isn't prerendered: instead of a page for each area, it's a single **404.html** page that loads the app in the browser for any URL. The server needs to send unknown URLs to **404.html**. The **web.config** file in **/static** does this on IIS servers, such as our internal preview server, and GitHub Pages does it automatically.
+
+**base_preview** must be set to a path (eg. **"/my-app"**), because the **404.html** page always uses absolute URLs. If it isn't, the preview build stops with an error.
+
+Each push to the **main** branch builds the data and a preview, and publishes it to GitHub Pages, using the workflow in **/.github/workflows/deploy.yml**. Pull requests to **main** run the same build, to check that it works, but aren't published.

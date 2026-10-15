@@ -2,6 +2,8 @@
 
 // Base paths
 export const base_prod = "/robo-embed"; // Directory on the ONS website
+// base_preview must be a path, and preview builds fail without one: they aren't prerendered, and
+// their 404.html fallback page always uses absolute URLs.
 export const base_preview = "/robo-embed"; // Directory on datavisweb preview server or Github Pages
 
 // Public address of the app, with no trailing slash. This is only used where the app needs a full,
