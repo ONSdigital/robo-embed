@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A SvelteKit 2 / Svelte 5 template for semi-automated ("robo-journalism") area content that is embedded in an ons.gov.uk article with an iframe (pym.js). A Pug template and a wide CSV (one row per area) are rendered ahead of time into one JSON file per area. Unlike [robo-article](https://github.com/ONSvisual/robo-article), which prerenders a page per area, the app is a single page that loads an area's JSON when it is selected. Templates are usually written in [robo-editor](https://onsdigital.github.io/robo-editor/).
+A SvelteKit 2 / Svelte 5 template for semi-automated ("robo-journalism") area content that is embedded in an ons.gov.uk article with an iframe (pym.js). A Pug template and a wide CSV (one row per area) are rendered ahead of time into one JSON file per area. Unlike [robo-article](https://github.com/ONSdigital/robo-article), which prerenders a page per area, the app is a single page that loads an area's JSON when it is selected. Templates are usually written in [robo-editor](https://onsdigital.github.io/robo-editor/).
 
 ## Commands
 
