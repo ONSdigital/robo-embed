@@ -1,7 +1,7 @@
 <script>
-	import html2canvas from "html2canvas";
+	import { snapdom } from "@zumer/snapdom";
 	import { app_url } from "../../app.config.js";
-	import { Button, Textarea } from "@onsvisual/svelte-components";
+	import { Button, Textarea, Details, List, Li, Icon } from "@onsvisual/svelte-components";
 	import { timeFormat, timeParse } from "d3-time-format";
 
 	let { place, section } = $props();
@@ -47,21 +47,23 @@
 		return csv;
 	}
 
-	async function downloadChart() {
-		const chart = el.parentElement.firstChild;
-		const canvas = await html2canvas(chart);
-		const base64 = canvas.toDataURL();
-		const a = document.createElement("a");
-
-		a.href = base64;
-		a.download = `${place.areanm.replaceAll(" ", "-")}_${section.id}.png`;
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
+	async function downloadChart(e) {
+		e.preventDefault();
+		const chart = el?.parentElement?.firstElementChild;
+		const result = await snapdom(chart, {
+			embedFonts: true,
+			backgroundColor: "white",
+			scale: 2
+		});
+		await result.download({
+			format: "png",
+			filename: `${place.areanm.replaceAll(" ", "-")}_${section.id}.png`
+		});
 	}
 
-	function downloadData() {
-		let csv = "\ufeff";
+	function downloadData(e) {
+		e.preventDefault();
+		let csv = "﻿";
 		csv += section.title ? `"${section.title}"\n` : "";
 		csv += section.subtitle
 			? section.xPrefix || section.ySuffix || section.xSuffix
@@ -96,31 +98,43 @@
 </script>
 
 <div class="chart-actions" bind:this={el}>
-	<Button variant="secondary" small on:click={downloadChart}>Download chart</Button>
-	<Button variant="secondary" small on:click={downloadData}>Download data</Button>
-	<Button variant="secondary" small on:click={() => (showEmbed = !showEmbed)}
-		>{showEmbed ? "Hide embed code" : "Show embed code"}</Button
-	>
-	{#if showEmbed}
-		<Textarea value={embedCode} rows={4} hideLabel />
-		<Button small on:click={() => clip(embedCode, "Copied to clipboard!")}
-			>Copy to clipboard</Button
-		>
-	{/if}
+	<Details title="Download and use this chart">
+		<List mode="bare">
+			<Li>
+				<Icon type="download" marginRight />
+				<a href="#0" onclick={downloadChart}>Download chart (PNG)</a>
+			</Li>
+			<Li>
+				<Icon type="download" marginRight />
+				<a href="#0" onclick={downloadData}>Download data (CSV)</a>
+			</Li>
+			<Li>
+				<Icon type="code" marginRight />
+				<a
+					href="#0"
+					onclick={(e) => {
+						e.preventDefault();
+						showEmbed = !showEmbed;
+					}}>{showEmbed ? "Hide embed code" : "Show embed code"}</a
+				>
+			</Li>
+		</List>
+		{#if showEmbed}
+			<Textarea value={embedCode} rows={4} readonly hideLabel />
+			<Button small on:click={() => clip(embedCode, "Copied to clipboard!")}
+				>Copy to clipboard</Button
+			>
+		{/if}
+	</Details>
 </div>
 
 <style>
 	.chart-actions {
-		min-height: auto !important;
+		display: block;
+		width: 100%;
+		margin-bottom: 12px;
 	}
 	.chart-actions :global(.ons-btn) {
-		margin-bottom: 10px;
-		margin-top: 8px;
-	}
-	.chart-actions :global(.ons-btn--secondary) {
-		margin-top: 0;
-	}
-	.chart-actions :global(.ons-btn + .ons-btn) {
-		margin-left: 0 !important;
+		margin: 4px 0 8px;
 	}
 </style>
