@@ -71,7 +71,7 @@ To check your CSV file before building, run:
 npm run check:data
 ```
 
-This names the columns it takes to be the area codes and names, then lists any blank rows, rows with no code, duplicate codes and columns with mixed types (eg. numbers alongside text like `n/a`, though empty cells are fine). It checks every row in the file, including any that **filter** would leave out, and exits with an error if it finds a problem.
+This names the columns it takes to be the area codes and names, then lists any blank rows (blank rows at the end of the file are ignored), rows with no code, duplicate codes and columns with mixed types (eg. numbers alongside text like `n/a`, though empty cells are fine). It checks every row in the file, including any that **filter** would leave out, and exits with an error if it finds a problem.
 
 `npm run build:data` prints a summary of how many pages were generated. If any page has a Pug error, it lists the first few area codes and exits with an error, and it keeps the previous output. Once every page renders, it also removes the JSON files of areas that are no longer in the data.
 
