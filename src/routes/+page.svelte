@@ -25,8 +25,7 @@
 
 	// The selected area's content, replaced when another area is selected
 	let place = $derived(data.place);
-	let selected = $state();
-	let clearInput = $state();
+	let selected = $state(null); // Not undefined: Select's value can't be bound to undefined
 
 	let twistyOpen = $state(true);
 
@@ -46,8 +45,7 @@
 		});
 		place = next;
 
-		selected = null;
-		clearInput();
+		selected = null; // Also clears the search box
 		// console.log(e);
 		// The input may not exist yet on page load, as Select creates it asynchronously
 		document.getElementById("select")?.blur();
@@ -115,7 +113,6 @@
 								labelKey="areanm"
 								options={data.places}
 								bind:value={selected}
-								bind:clearInput
 								placeholder="Type an area name..."
 							/>
 						</div>
