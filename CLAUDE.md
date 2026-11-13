@@ -9,7 +9,7 @@ A SvelteKit 2 / Svelte 5 template for semi-automated ("robo-journalism") area co
 ## Commands
 
 ```bash
-npm run check:data      # check the source CSV for blank rows, missing or duplicate codes and mixed types
+npm run check:data      # check the source CSV for blank rows, missing codes or names, duplicate codes and mixed types
 npm run build:data      # render demo-data/ (or the source in app.config.js) into static/data/
 npm run dev             # dev server at localhost:5173 (localhost:5173/iframe.html shows it in an iframe)
 npm run build           # production build to build/, then js-fix
@@ -25,7 +25,7 @@ Formatting (`.prettierrc`): tabs (width 4), print width 100, no trailing commas,
 
 ## Architecture
 
-**Data check (Node, `scripts/check-data.js`).** Reads the whole CSV named in `src/app.config.js` (ignoring `filter`) and prints the report from robo-utils' `validateCSV` (the checks themselves live in robo-utils). This gives its likely code and name columns (from `getCodeKey` and `getNameKey`) and how many blank rows at the end of the file it ignored (as `csvParse` does), then any other blank rows, rows with no code, duplicate codes and columns with mixed types (empty cells are valid in any column). It reports every problem, identifying rows by their spreadsheet row number (the header is row 1), and exits with code 1 if there are any. It isn't part of `build:data`.
+**Data check (Node, `scripts/check-data.js`).** Reads the whole CSV named in `src/app.config.js` (ignoring `filter`) and prints the report from robo-utils' `validateCSV` (the checks themselves live in robo-utils). This gives its likely code and name columns (from `getCodeKey` and `getNameKey`) and how many blank rows at the end of the file it ignored (as `csvParse` does), then any other blank rows, rows with no code, rows with no name, duplicate codes and columns with mixed types (empty cells are valid in any column). It reports every problem, identifying rows by their spreadsheet row number (the header is row 1), and exits with code 1 if there are any. It isn't part of `build:data`.
 
 **Data build (Node, `scripts/build-data.js`).** Reads the CSV and Pug template named in `src/app.config.js`, keeps rows whose code prefix is in `filter` (`null` or `[]` keeps every row), and for each area (plus `null`, meaning no area selected) calls robo-utils' `renderJSON`. It writes `static/data/json/<areacd>.json` (and `default.json`), plus `static/data/places.csv` with only the `cols` columns, which powers the area search and the list of all areas, and copies any `files_to_copy` from the source folder into `static/data/`. Unlike `check:data`, which detects the code column, it expects that column to be named `areacd` (the filter and the file names use it). Template changes need a `build:data` rerun. After a run where every page rendered without a Pug error, it deletes JSON files for areas that are no longer in the data; it prints a summary and exits with code 1 if any page failed.
 
